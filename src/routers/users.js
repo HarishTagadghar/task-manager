@@ -29,7 +29,7 @@ try{
   const user = await findByCreadentials(req.body.email,req.body.password);
 res.send(user)
 }catch(e){
- console.log(error);
+ res.status(404).send(e)
  
 }
 
