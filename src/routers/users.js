@@ -1,10 +1,10 @@
 const express = require("express");
 const bcrypt = require("bcryptjs");
-const User = require("../models/users");
+const findByCreadentials = require('../userlogin')
 
 const router = new express.Router();
 
-router.post("/users", async (req, res) => {
+router.post("/users",  (req, res) => {
   bcrypt.hash(req.body.password, 8, function (err, hash) {
     let user = new User({
       name: req.body.name,
@@ -21,6 +21,20 @@ router.post("/users", async (req, res) => {
     });
   });
 });
+
+router.post('/users/login' , async (req,res) => {
+
+try{
+ 
+  const user = await findByCreadentials(req.body.email,req.body.password);
+res.send(user)
+}catch(e){
+ console.log(error);
+ 
+}
+
+
+})
 
 router.get("/users", async (req, res) => {
   try {

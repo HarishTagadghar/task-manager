@@ -1,5 +1,7 @@
 const mongoose = require('mongoose')
 const validator = require('validator')
+const bcrypt = require("bcryptjs");
+
 
 const userschema = new mongoose.Schema( {
     name: {
@@ -10,6 +12,7 @@ const userschema = new mongoose.Schema( {
     email: {
         type: String,
         required: true,
+        unique:true,
         trim: true,
         lowercase: true,
         validate(value) {
@@ -39,6 +42,20 @@ const userschema = new mongoose.Schema( {
         }
     }
 })
+
+userschema.statics.findByCreadentials = async (email,password) =>{
+    const user = await User.findOne({email});
+
+    if(!user) {
+        throw new Error('cannot login')
+    }
+
+    const ismatch  = await bcrypt.compare(password,user.password)
+    if(!ismatch){ 
+        throw new Error('cannot login')
+    }
+    return user
+}
 
 const Users = mongoose.model('Users',userschema)
 
