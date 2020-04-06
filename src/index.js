@@ -63,6 +63,39 @@ app.get('/users/:id' , async (req,res) =>{
     
 });
 
+app.patch('/users/:id' , async (req,res) => {
+
+    const updateUser = Object.keys(req.body);
+    const updateIncludes = ['name','email','password','age'];
+    let validKey = updateUser.every((user)=>updateIncludes.includes(user))
+    if(!validKey){
+        return res.status(404).send({error:'invalid object keys'})
+    }
+
+
+    try {
+     let user = await User.findByIdAndUpdate(req.params.id , req.body ,{new:true , runValidators : true})
+    if(!user){
+       return res.status(404).send()
+    }
+    res.send(user)
+    }catch (e) {
+    res.status(500).send(e)
+    }
+});
+
+app.delete('/users/:id' , async (req,res) =>{
+    try{
+    let user = await User.findByIdAndDelete(req.params.id) 
+    if(!user) {
+      return  res.status(404).send({error:'not found'})
+    }
+    res.send(user)
+    }catch(e){
+    res.status(500).send()
+    }
+})
+
 app.get('/tasks' , (req,res) => {
     Task.find({}).then((tasks)=>{
 res.send(tasks)
@@ -81,7 +114,41 @@ app.get('/tasks/:id' , (req,res) => {
     }).catch((e)=> {
         res.status(500).send(e)     
     })
+});
+
+app.patch('/tasks/:id' , async (req,res) => {
+
+    const updateUser = Object.keys(req.body);
+    const updateIncludes = ['discription','completed'];
+    let validKey = updateUser.every((user)=>updateIncludes.includes(user))
+    if(!validKey){
+        return res.status(400).send({error:'invalid object keys'})
+    }
+
+
+    try {
+     let task = await Task.findByIdAndUpdate(req.params.id , req.body ,{new:true , runValidators : true})
+    if(!task){
+       return res.status(404).send()
+    }
+    res.send(task)
+    }catch (e) {
+    res.status(500).send(e)
+    }
+});
+
+app.delete('/tasks/:id' , async (req,res) =>{
+    try{
+    let task = await Task.findByIdAndDelete(req.params.id) 
+    if(!task) {
+      return  res.status(404).send({error:'not found'})
+    }
+    res.send(task)
+    }catch(e){
+    res.status(500).send()
+    }
 })
+
     
 let port = process.env.PORT || 3000
 app.listen(port, ()=>{
