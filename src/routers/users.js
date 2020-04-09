@@ -2,6 +2,7 @@ const express = require("express");
 const bcrypt = require("bcryptjs");
 const User = require('../models/users')
 const findByCreadentials = require('../login/userlogin')
+const auth = require('../middleware/auth')
 
 const router = new express.Router();
 
@@ -41,13 +42,15 @@ res.send({user,token})
 
 })
 
-router.get("/users", async (req, res) => {
-  try {
-    let users = await User.find({});
-    res.send(users);
-  } catch (e) {
-    res.status(404).send();
-  }
+router.get("/users", auth , async (req, res) => {
+  // try {
+  //   let users = await User.find({});
+  //   res.send(users);
+  // } catch (e) {
+  //   res.status(404).send();
+  // } //this is to show all users data
+
+  res.send(req.user)
 });
 
 router.get("/users/:id", async (req, res) => {
