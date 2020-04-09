@@ -57,7 +57,8 @@ userschema.methods.generateAuthToken = async function () {
     await user.save()
 
     return token
-}
+} 
+
 userschema.methods.toJSON = function () {
     const user = this
     let userObject = user.toObject()
