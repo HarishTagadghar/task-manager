@@ -27,13 +27,35 @@ router.post("/users",  (req, res) => {
   });
 });
 
+router.post('/users/logout' , auth , async(req,res) => {
+  try {
+  req.user.tokens = req.user.tokens.filter((token) =>{
+    return token.token !== req.token
+  })
+  await req.user.save()
+  res.send()
+  }catch(e) {
+  res.status(500).send()
+  }
+});
+
+router.post('/users/logoutAll' , auth ,async (req,res) =>{
+  try{
+  req.user.tokens = []
+  await req.user.save()
+  res.send()
+  }catch(e) {
+  res.status(500).send(e)
+  }
+})
+
 router.post('/users/login' , async (req,res) => {
 
 try{
  
   const user = await findByCreadentials(req.body.email,req.body.password);
   const token = await user.generateAuthToken()
-res.send({user,token})
+  res.send({user,token})
 }catch(e){
  res.status(404).send(e)
  

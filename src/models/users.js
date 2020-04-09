@@ -58,6 +58,14 @@ userschema.methods.generateAuthToken = async function () {
 
     return token
 }
+userschema.methods.toJSON = function () {
+    const user = this
+    let userObject = user.toObject()
+
+    delete userObject.password;
+    delete userObject.tokens;
+    return userObject
+}
 
 const Users = mongoose.model('Users',userschema)
 
