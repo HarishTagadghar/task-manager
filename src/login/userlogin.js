@@ -1,5 +1,5 @@
 const bcrypt = require("bcryptjs");
-const User = require('./models/users')
+const User = require('../models/users')
 
 let findByCreadentials = async (email,password) =>{
     const user = await User.findOne({email});

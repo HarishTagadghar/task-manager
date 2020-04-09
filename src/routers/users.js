@@ -1,6 +1,7 @@
 const express = require("express");
 const bcrypt = require("bcryptjs");
-const findByCreadentials = require('../userlogin')
+const User = require('../models/users')
+const findByCreadentials = require('../login/userlogin')
 
 const router = new express.Router();
 
@@ -13,8 +14,11 @@ router.post("/users",  (req, res) => {
     });
 
     user.save()
+
       .then((user) => {
-        res.status(201).send(user);
+       const token =  user.generateAuthToken()
+        res.status(201).send({user,token});
+
       })
       .catch((e) => {
     res.status(400).send(e)
@@ -27,7 +31,8 @@ router.post('/users/login' , async (req,res) => {
 try{
  
   const user = await findByCreadentials(req.body.email,req.body.password);
-res.send(user)
+  const token = await user.generateAuthToken()
+res.send({user,token})
 }catch(e){
  res.status(404).send(e)
  
