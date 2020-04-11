@@ -9,6 +9,10 @@ let tasks = mongoose.model('Tasks' , {
     completed:{
         default:false,
         type:Boolean
+    },
+    owner:{
+        type: mongoose.Schema.Types.ObjectId,
+        require:true
     }
 })
 
