@@ -5,6 +5,7 @@ const sharp = require('sharp')
 const User = require('../models/users')
 const findByCreadentials = require('../login/userlogin')
 const auth = require('../middleware/auth')
+const {welcomeEmail,goodbyeEmail} = require('../emails/emails')
 
 const router = new express.Router();
 
@@ -19,6 +20,7 @@ router.post("/users",  (req, res) => {
     user.save()
 
       .then((user) => {
+        welcomeEmail(user.email,user.name)
        const token =  user.generateAuthToken()
         res.status(201).send({user,token});
 
@@ -102,6 +104,7 @@ router.patch("/users/me", auth ,  async (req, res) => {
 router.delete("/users/me", auth , async (req, res) => {
   try {
     req.user.remove()
+    goodbyeEmail(req.user.email,req.user.name)
     res.send(req.user);
   } catch (e) {
     res.status(500).send();
