@@ -1,5 +1,6 @@
 const express = require("express");
 const bcrypt = require("bcryptjs");
+const multer = require('multer')
 const User = require('../models/users')
 const findByCreadentials = require('../login/userlogin')
 const auth = require('../middleware/auth')
@@ -105,5 +106,22 @@ router.delete("/users/me", auth , async (req, res) => {
     res.status(500).send();
   }
 });
+
+const upload = multer({
+  dest:'images',
+  limits: {
+    fileSize: 1000000
+  },
+  fileFilter(req,file,cb) {
+    if(!file.originalname.match(/\.(jpg|jpge|pdf)$/)){
+      return cb(new Error('file mulst be in jpg or PDF formet'))
+    }
+    cb(undefined,true)
+  }
+})
+
+router.post('/user/me/upload' , upload.single('upload') , (req,res) => {
+  res.send()
+})
 
 module.exports = router;
