@@ -1,6 +1,7 @@
 const express = require("express");
 const bcrypt = require("bcryptjs");
-const multer = require('multer')
+const multer = require('multer');
+const sharp = require('sharp')
 const User = require('../models/users')
 const findByCreadentials = require('../login/userlogin')
 const auth = require('../middleware/auth')
@@ -121,7 +122,8 @@ const upload = multer({
 })
 
 router.post('/user/me/image' , auth , upload.single('upload') ,async (req,res) => {
-  req.user.image = req.file.buffer
+  let buffer = await sharp(req.file.buffer).resize({width:250 , height:250}).png().toBuffer();
+  req.user.image = buffer
   await req.user.save()
   res.send()
 } , (error,req,res,next) => {
@@ -141,7 +143,7 @@ router.get('/user/:id/image' , async (req,res) => {
     if(!user || !user.image){
       throw new Error('cant find image')
     }
-    res.set('Content-Type','image/jpg')
+    res.set('Content-Type','image/png')
     res.send(user.image)
   }catch(e) {
     res.status(404).send(e)
