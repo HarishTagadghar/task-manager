@@ -132,6 +132,20 @@ router.delete('/user/me/image' , auth , async (req,res) => {
   req.user.image = undefined;
   await req.user.save()
   res.send()
+});
+
+router.get('/user/:id/image' , async (req,res) => {
+  try{
+    let user = await User.findById(req.params.id);
+
+    if(!user || !user.image){
+      throw new Error('cant find image')
+    }
+    res.set('Content-Type','image/jpg')
+    res.send(user.image)
+  }catch(e) {
+    res.status(404).send(e)
+  }
 })
 
 module.exports = router;
