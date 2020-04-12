@@ -108,7 +108,7 @@ router.delete("/users/me", auth , async (req, res) => {
 });
 
 const upload = multer({
-  dest:'images',
+  // dest:'images',
   limits: {
     fileSize: 1000000
   },
@@ -120,10 +120,18 @@ const upload = multer({
   }
 })
 
-router.post('/user/me/upload' , upload.single('upload') , (req,res) => {
+router.post('/user/me/image' , auth , upload.single('upload') ,async (req,res) => {
+  req.user.image = req.file.buffer
+  await req.user.save()
   res.send()
 } , (error,req,res,next) => {
   res.status(400).send({error: error.message})
+}) // another cb function to handel proper error
+
+router.delete('/user/me/image' , auth , async (req,res) => {
+  req.user.image = undefined;
+  await req.user.save()
+  res.send()
 })
 
 module.exports = router;

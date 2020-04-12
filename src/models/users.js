@@ -41,6 +41,9 @@ const userschema = new mongoose.Schema( {
             }
         }
     },
+    image:{
+    type: Buffer
+    },
     tokens: [{
         token:{
             type:String,
